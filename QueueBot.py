@@ -22,13 +22,7 @@ class Info():
 	queue = []
 	players = set()
 
-	def __init__(self):
-		self.trusted = set()
-		self.size = 1
-		self.toggle = True
-		self.connect = True
-
-	def __init__(self, trusted, size, toggle, connect):
+	def __init__(self, trusted = set(), size = 1, toggle = True, connect = True):
 		self.trusted = trusted
 		self.size = size
 		self.toggle = toggle
@@ -134,6 +128,24 @@ def part(channel):
 	except KeyError:
 		print("   > part: No channel_info for %s" % channel)
 
+# Save channel_info to an XML file
+# TODO clear data from old channels
+def save_data():
+	tree = ET.ElementTree(ET.Element('data'))
+	root = tree.getroot()
+
+	for channel in channel_info:
+		chan = ET.SubElement(root, 'channel', {'name' : channel})
+		ET.SubElement(chan, 'size').text = str(channel_info[channel].size)
+		ET.SubElement(chan, 'toggle').text = '1' if channel_info[channel].toggle else '0'
+		ET.SubElement(chan, 'connect').text = '1' if channel_info[channel].connect else '0'
+
+		for name in channel_info[channel].trusted:
+			ET.SubElement(chan, 'trusted', {'name':name})
+
+	tree.write(SAVE_FILE)
+	print("   > Data saved to %s" % SAVE_FILE)
+
 # Load channel_info from an XML file
 def load_data():
 	try:
@@ -153,26 +165,9 @@ def load_data():
 
 			channel_info[channel_name] = Info(trust, size, toggle, connect)
 			print("   > Data loaded from %s" % SAVE_FILE)
-	except FileNotFoundError:
-		print("   > load_data: file not found")
-
-# Save channel_info to an XML file
-# TODO clear data from old channels
-def save_data():
-	tree = ET.ElementTree(ET.Element('data'))
-	root = tree.getroot()
-
-	for channel in channel_info:
-		chan = ET.SubElement(root, 'channel', {'name' : channel})
-		ET.SubElement(chan, 'size').text = str(channel_info[channel].size)
-		ET.SubElement(chan, 'toggle').text = '1' if channel_info[channel].toggle else '0'
-		ET.SubElement(chan, 'connect').text = '1' if channel_info[channel].connect else '0'
-
-		for name in channel_info[channel].trusted:
-			ET.SubElement(chan, 'trusted', {'name':name})
-
-	tree.write(SAVE_FILE)
-	print("   > Data saved to %s" % SAVE_FILE)
+	except (OSError, IOError) as e:
+		print("   > %s not found. Creating new %s" % (SAVE_FILE, SAVE_FILE))
+		save_data()
 
 def list_to_str(list):
 	return ', '.join(list)
@@ -206,7 +201,7 @@ def send_msg(channel, msg):
 def main():
 	load_data()
 	connect()
-	#join(INIT_CHANNEL)
+	join(INIT_CHANNEL)
 	readbuffer = ""
 
 	while True:
