@@ -390,7 +390,7 @@ def main():
 										send_msg(channel, "Dropped: %s" % remove_name)
 									elif result[0] == 'R':
 										send_msg(channel, "Replaced %s with %s" % (remove_name, result[1:]))
-									elif result = 'N':
+									elif result == 'N':
 										send_msg(channel, "%s not in queue or group" % remove_name)
 								except KeyError:
 									print("   > !queue remove: No channel_info for %s" % channel)
