@@ -1,7 +1,7 @@
 QueueBot
 ========
 
-Queue management bot for Twitch.tv chat
+Queue management bot for Twitch.tv chat on Python 3.4
 
 Set NICK, IDENT, and REALNAME to the Twitch.tv username of the bot.
 
