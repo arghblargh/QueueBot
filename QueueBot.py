@@ -208,7 +208,7 @@ def main():
 
 	while True:
 		# Receive data from IRC and spitting it into lines.
-		readbuffer += s.recv(1024).decode()
+		readbuffer += s.recv(1024).decode('utf-8', 'replace')
 
 		if len(readbuffer) == 0:
 			print("   > Disconnected! Attempting to reconnect...")
