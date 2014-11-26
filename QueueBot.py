@@ -39,7 +39,7 @@ class Info():
 		self.queue_clear()
 		self.connect = False
 
-	def trusted(self, user):
+	def is_trusted(self, user):
 		return user in self.trusted
 
 	def trust(self, user, flag):
@@ -89,6 +89,8 @@ class Info():
 				return 'R' + new_player
 			else:
 				return 'D'
+				
+		return 'N'
 
 	def queue_size(self):
 		return len(self.queue)
@@ -185,7 +187,7 @@ def broadcaster_auth(channel, user):
 	return user==channel[1:]
 
 def trusted_auth(channel, user):
-	return channel_info[channel].trusted(user)
+	return channel_info[channel].is_trusted(user)
 
 # Due to the delay, some messages may be dropped
 def send_msg(channel, msg):
@@ -388,10 +390,10 @@ def main():
 										send_msg(channel, "Dropped: %s" % remove_name)
 									elif result[0] == 'R':
 										send_msg(channel, "Replaced %s with %s" % (remove_name, result[1:]))
+									elif result = 'N':
+										send_msg(channel, "%s not in queue or group" % remove_name)
 								except KeyError:
 									print("   > !queue remove: No channel_info for %s" % channel)
-								except ValueError:
-									print("   > !queue remove: user not in queue or group")
 
 							# Show user's position in queue
 							elif (queue_command=='position'):
